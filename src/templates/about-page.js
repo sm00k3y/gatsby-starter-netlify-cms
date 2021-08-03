@@ -1,22 +1,23 @@
-import React from 'react'
+import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Content, { HTMLContent } from '../components/Content'
-import { firebaseRef } from '../firebase'
+import firebase from '../firebase'
 
 
 export const AboutPageTemplate = ({ title, content, contentComponent, id }) => {
   const PageContent = contentComponent || Content
 
-  let textField = firebaseRef.child('comments/'+id).push();
-
-  // let inputTitle = React.createRef();
-
   const addBook = () => {
-    console.log(textField)
-    textField.set({
-      title: "Hello"
+    console.log("I'm here!")
+    let value = "hello";
+    firebase.database().ref("comments/").push().set({
+      title: value,
+    }, (error) => {
+      if (error) {
+        console.log(error.message)
+      } else {}
     })
   }
 
@@ -30,7 +31,12 @@ export const AboutPageTemplate = ({ title, content, contentComponent, id }) => {
                 {title}
               </h2>
               <PageContent className="content" content={content} />
-              <button onClick={addBook}>Click me!</button>
+              <form onSubmit={addBook}>
+                <input type="submit" value="Sumbit"/>
+                <button onClick={() => firebase.database().ref("comments").push({title: "Hello"})}>
+                  Click me!
+                </button>
+              </form>
             </div>
           </div>
         </div>
