@@ -9,3 +9,5 @@ tags:
   - coffee
 ---
 > * Hejka, witam was **wszystkich**!!
+
+![making-coffee process](https://joya.info/images/content/438914-1200x700c56x50-Kaffee-mit-pflanzlicher-Milch-Barista_1200x798.jpg "Coffee making process")
