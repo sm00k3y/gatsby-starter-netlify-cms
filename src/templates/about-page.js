@@ -3,9 +3,22 @@ import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 import Content, { HTMLContent } from '../components/Content'
+import { firebaseRef } from '../firebase'
 
-export const AboutPageTemplate = ({ title, content, contentComponent }) => {
+
+export const AboutPageTemplate = ({ title, content, contentComponent, id }) => {
   const PageContent = contentComponent || Content
+
+  let textField = firebaseRef.child('comments/'+id).push();
+
+  // let inputTitle = React.createRef();
+
+  const addBook = () => {
+    console.log(textField)
+    textField.set({
+      title: "Hello"
+    })
+  }
 
   return (
     <section className="section section--gradient">
@@ -17,6 +30,7 @@ export const AboutPageTemplate = ({ title, content, contentComponent }) => {
                 {title}
               </h2>
               <PageContent className="content" content={content} />
+              <button onClick={addBook}>Click me!</button>
             </div>
           </div>
         </div>
@@ -40,6 +54,7 @@ const AboutPage = ({ data }) => {
         contentComponent={HTMLContent}
         title={post.frontmatter.title}
         content={post.html}
+        id={post.id}
       />
     </Layout>
   )
@@ -58,6 +73,7 @@ export const aboutPageQuery = graphql`
       frontmatter {
         title
       }
+      id
     }
   }
 `
