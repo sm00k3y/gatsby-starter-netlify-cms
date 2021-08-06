@@ -30,6 +30,7 @@ export const CommentRoll = ({ id }) => {
       setName("");
       setComment("");
     }
+    getComments();
     event.preventDefault();
   };
 
@@ -43,6 +44,7 @@ export const CommentRoll = ({ id }) => {
   };
 
   const getComments = () => {
+    setAllComments([]);
     const ref = firebase.database().ref("comments/" + id);
     ref.on(
       "value",
