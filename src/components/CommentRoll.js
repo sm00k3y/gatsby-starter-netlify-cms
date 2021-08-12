@@ -1,13 +1,13 @@
 import * as React from "react";
 import firebase from "../firebase";
+// import TestComponent from "./logins/test";
+import { GoogleSignInButton } from "./logins/google";
 
 export const CommentRoll = ({ id }) => {
   const [name, setName] = React.useState("");
   const [comment, setComment] = React.useState("");
   const [allComments, setAllComments] = React.useState([]);
-
-  var provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth.languageCode = "pl";
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   const addComment = (event) => {
     console.log("I'm here!");
@@ -65,59 +65,39 @@ export const CommentRoll = ({ id }) => {
     );
   };
 
-  const handleSignIn = () => {
-    firebase.auth().signInWithRedirect(provider);
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then((result) => {
-        if (result.credential) {
-          /** @type {firebase.auth.OAuthCredential} */
-          var credential = result.credential;
-
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = credential.accessToken;
-          // ...
-        }
-        // The signed-in user info.
-        var user = result.user;
-        console.log("Successful login!!!");
-        console.log(user);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-      });
+  const onLogin = (loginName) => {
+    console.log("Hello " + loginName);
+    setName(loginName);
+    setLoggedIn(true);
   };
 
   return (
     <div>
-      <button onClick={handleSignIn}>Sign in with Google</button>
-      <form onSubmit={addComment}>
-        <input
-          type="text"
-          onChange={handleName}
-          placeholder="Name"
-          value={name}
-        />
-        <br />
-        <br />
-        <textarea
-          value={comment}
-          onChange={handleComment}
-          rows={5}
-          cols={75}
-          placeholder="Enter new comment"
-        />
-        <br />
-        <input type="submit" value="Sumbit" />
-      </form>
+      {loggedIn ? (
+        <form onSubmit={addComment}>
+          <input
+            type="text"
+            onChange={handleName}
+            placeholder="Name"
+            value={name}
+          />
+          <br />
+          <textarea
+            value={comment}
+            onChange={handleComment}
+            rows={5}
+            cols={75}
+            placeholder="Enter new comment"
+          />
+          <br />
+          <input type="submit" value="Sumbit" />
+        </form>
+      ) : (
+        <div>
+          <h1>In order to add comment you need to sign in!</h1>
+          <GoogleSignInButton onLogin={onLogin} />
+        </div>
+      )}
       <button onClick={() => getComments()}>Click me</button>
       <div>
         {allComments.map((comment) => {
