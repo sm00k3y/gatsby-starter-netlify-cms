@@ -1,5 +1,6 @@
 import * as React from "react";
 import firebase from "firebase";
+import "./login-styles.css";
 
 export const GoogleSignInButton = ({ onLogin }) => {
   var provider = new firebase.auth.GoogleAuthProvider();
@@ -19,7 +20,7 @@ export const GoogleSignInButton = ({ onLogin }) => {
         var user = result.user;
         // ...
         console.log(user);
-        onLogin(user.displayName);
+        onLogin(user.displayName, user.photoURL);
       })
       .catch((error) => {
         // Handle Errors here.
@@ -35,7 +36,9 @@ export const GoogleSignInButton = ({ onLogin }) => {
 
   return (
     <div>
-      <button onClick={() => handleSignIn()}>Sign in with Google</button>
+      <button className="google-button" onClick={() => handleSignIn()}>
+        Sign in with Google
+      </button>
     </div>
   );
 };

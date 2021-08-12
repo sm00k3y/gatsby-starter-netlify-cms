@@ -8,6 +8,7 @@ export const CommentRoll = ({ id }) => {
   const [comment, setComment] = React.useState("");
   const [allComments, setAllComments] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [userImgUrl, setUserImgUrl] = React.useState("");
 
   const addComment = (event) => {
     console.log("I'm here!");
@@ -21,6 +22,7 @@ export const CommentRoll = ({ id }) => {
           {
             name: name,
             comment: comment,
+            photoUrl: userImgUrl,
           },
           (error) => {
             if (error) {
@@ -30,7 +32,6 @@ export const CommentRoll = ({ id }) => {
             }
           }
         );
-      setName("");
       setComment("");
     }
     getComments();
@@ -65,9 +66,10 @@ export const CommentRoll = ({ id }) => {
     );
   };
 
-  const onLogin = (loginName) => {
+  const onLogin = (loginName, imageUrl) => {
     console.log("Hello " + loginName);
     setName(loginName);
+    setUserImgUrl(imageUrl);
     setLoggedIn(true);
   };
 
@@ -75,12 +77,14 @@ export const CommentRoll = ({ id }) => {
     <div>
       {loggedIn ? (
         <form onSubmit={addComment}>
-          <input
+          <img src={userImgUrl} />
+          <label>{name}</label>
+          {/* <input
             type="text"
             onChange={handleName}
             placeholder="Name"
             value={name}
-          />
+          /> */}
           <br />
           <textarea
             value={comment}
@@ -103,6 +107,7 @@ export const CommentRoll = ({ id }) => {
         {allComments.map((comment) => {
           return (
             <p>
+              <img src={comment.photoUrl} />
               {comment.name} - {comment.comment}
             </p>
           );
