@@ -77,7 +77,7 @@ export const CommentRoll = ({ id }) => {
     <div>
       {loggedIn ? (
         <form onSubmit={addComment}>
-          <img src={userImgUrl} />
+          <img src={userImgUrl} alt="avatar" />
           <label>{name}</label>
           {/* <input
             type="text"
@@ -103,13 +103,22 @@ export const CommentRoll = ({ id }) => {
         </div>
       )}
       <button onClick={() => getComments()}>Click me</button>
-      <div>
+      {/* All comments */}
+      <div className="comments">
         {allComments.map((comment) => {
           return (
-            <p>
-              <img src={comment.photoUrl} />
-              {comment.name} - {comment.comment}
-            </p>
+            <div className="single-comment">
+              <div className="comment-info">
+                <div className="user-image">
+                  <img src={comment.photoUrl} alt="avatar" />
+                </div>
+                <div className="comment-data">
+                  <div className="comment-author">{comment.name}</div>
+                  <div className="comment-time">11:11 28.09.2021</div>
+                </div>
+              </div>
+              <div className="comment-text">{comment.comment}</div>
+            </div>
           );
         })}
       </div>

@@ -1,6 +1,6 @@
 import * as React from "react";
 import firebase from "firebase";
-import "./login-styles.css";
+import gLogo from "../../img/g_logo.svg";
 
 export const GoogleSignInButton = ({ onLogin }) => {
   var provider = new firebase.auth.GoogleAuthProvider();
@@ -37,7 +37,8 @@ export const GoogleSignInButton = ({ onLogin }) => {
   return (
     <div>
       <button className="google-button" onClick={() => handleSignIn()}>
-        Sign in with Google
+        <img src={gLogo} alt="Google Icon" style={{ paddingRight: 18 }} />
+        <incline class="g-button-text">Sign in with Google</incline>
       </button>
     </div>
   );
