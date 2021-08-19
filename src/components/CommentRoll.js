@@ -2,18 +2,18 @@ import * as React from "react";
 import firebase from "../firebase";
 // import TestComponent from "./logins/test";
 import { GoogleSignInButton } from "./logins/google";
+import { SingleComment, CommentInput } from "./comments/CommentComponents";
 
 export const CommentRoll = ({ id }) => {
   const [name, setName] = React.useState("");
-  const [comment, setComment] = React.useState("");
   const [allComments, setAllComments] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userImgUrl, setUserImgUrl] = React.useState("");
 
-  const addComment = (event) => {
+  const addComment = (comment, commentDate) => {
     console.log("I'm here!");
     if (name === "" || comment === "") {
-      alert("Nazwa użytkownika lub komentarz jest pusty! Wprowadź dane.");
+      alert("Nie można dodać pustego komentarza. :)");
     } else {
       firebase
         .database()
@@ -22,29 +22,19 @@ export const CommentRoll = ({ id }) => {
           {
             name: name,
             comment: comment,
+            date: commentDate,
             photoUrl: userImgUrl,
           },
           (error) => {
             if (error) {
               console.log(error.message);
             } else {
-              console.log("No error!");
+              console.log("No error adding comment to DB!");
             }
           }
         );
-      setComment("");
     }
     getComments();
-    event.preventDefault();
-  };
-
-  const handleName = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleComment = (event) => {
-    console.log(allComments);
-    setComment(event.target.value);
   };
 
   const getComments = () => {
@@ -54,11 +44,15 @@ export const CommentRoll = ({ id }) => {
       "value",
       (snaphot) => {
         const coms = snaphot.val();
-        console.log(Object.entries(coms));
-        Object.entries(coms).forEach((elem) => {
-          console.log(elem[1]);
-          setAllComments((allComments) => [...allComments, elem[1]]);
-        });
+        if (coms !== null) {
+          console.log(Object.entries(coms));
+          Object.entries(coms).forEach((elem) => {
+            console.log(elem[1]);
+            setAllComments((allComments) => [...allComments, elem[1]]);
+          });
+        } else {
+          console.log("No comments in DB");
+        }
       },
       (errorObj) => {
         console.log("The read failed: " + errorObj.name);
@@ -76,26 +70,11 @@ export const CommentRoll = ({ id }) => {
   return (
     <div>
       {loggedIn ? (
-        <form onSubmit={addComment}>
-          <img src={userImgUrl} alt="avatar" />
-          <label>{name}</label>
-          {/* <input
-            type="text"
-            onChange={handleName}
-            placeholder="Name"
-            value={name}
-          /> */}
-          <br />
-          <textarea
-            value={comment}
-            onChange={handleComment}
-            rows={5}
-            cols={75}
-            placeholder="Enter new comment"
-          />
-          <br />
-          <input type="submit" value="Sumbit" />
-        </form>
+        <CommentInput
+          userName={name}
+          userImage={userImgUrl}
+          addComment={addComment}
+        />
       ) : (
         <div>
           <h1>In order to add comment you need to sign in!</h1>
@@ -105,22 +84,13 @@ export const CommentRoll = ({ id }) => {
       <button onClick={() => getComments()}>Click me</button>
       {/* All comments */}
       <div className="comments">
-        {allComments.map((comment) => {
-          return (
-            <div className="single-comment">
-              <div className="comment-info">
-                <div className="user-image">
-                  <img src={comment.photoUrl} alt="avatar" />
-                </div>
-                <div className="comment-data">
-                  <div className="comment-author">{comment.name}</div>
-                  <div className="comment-time">11:11 28.09.2021</div>
-                </div>
-              </div>
-              <div className="comment-text">{comment.comment}</div>
-            </div>
-          );
-        })}
+        {allComments.length > 0 ? (
+          allComments.reverse().map((comment) => {
+            return <SingleComment comment={comment} />;
+          })
+        ) : (
+          <h1>Bądź pierwszą osobą, która doda komentarz...</h1>
+        )}
       </div>
     </div>
   );
