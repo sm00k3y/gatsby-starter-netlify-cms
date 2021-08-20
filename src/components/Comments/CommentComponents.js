@@ -1,6 +1,21 @@
 import * as React from "react";
 
 export const SingleComment = ({ comment }) => {
+  const dateString = (commentDate) => {
+    var date = new Date(commentDate);
+    return (
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      "  " +
+      date.toLocaleDateString("pl-PL", { day: "2-digit" }) +
+      "." +
+      date.toLocaleDateString("pl-PL", { month: "2-digit" }) +
+      "." +
+      date.getFullYear()
+    );
+  };
+
   return (
     <div className="single-comment">
       <div className="comment-info">
@@ -9,7 +24,7 @@ export const SingleComment = ({ comment }) => {
         </div>
         <div className="comment-data">
           <div className="comment-author">{comment.name}</div>
-          <div className="comment-time">{comment.date}</div>
+          <div className="comment-time">{dateString(comment.date)}</div>
         </div>
       </div>
       <div className="comment-text">{comment.comment}</div>
@@ -26,17 +41,7 @@ export const CommentInput = ({ userName, userImage, addComment }) => {
 
   const handleSumbitComment = (event) => {
     event.preventDefault();
-    var date = new Date();
-    var commentDate =
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      "  " +
-      date.toLocaleDateString("pl-PL", { day: "2-digit" }) +
-      "." +
-      date.toLocaleDateString("pl-PL", { month: "2-digit" }) +
-      "." +
-      date.getFullYear();
+    var commentDate = Date.now();
     addComment(comment, commentDate);
     setComment("");
   };

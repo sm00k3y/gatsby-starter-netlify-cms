@@ -1,8 +1,11 @@
 import * as React from "react";
 import firebase from "../firebase";
 // import TestComponent from "./logins/test";
-import { GoogleSignInButton } from "./logins/google";
-import { SingleComment, CommentInput } from "./comments/CommentComponents";
+import {
+  GoogleSignInButton,
+  FacebookSignInButton,
+} from "./Authentication/AuthComponents";
+import { SingleComment, CommentInput } from "./Comments/CommentComponents";
 
 export const CommentRoll = ({ id }) => {
   const [name, setName] = React.useState("");
@@ -67,6 +70,16 @@ export const CommentRoll = ({ id }) => {
     setLoggedIn(true);
   };
 
+  const sortComments = (com1, com2) => {
+    if (com1.date > com2.date) {
+      return 1;
+    } else if (com1.date < com2.date) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
   return (
     <div>
       {loggedIn ? (
@@ -79,15 +92,19 @@ export const CommentRoll = ({ id }) => {
         <div>
           <h1>In order to add comment you need to sign in!</h1>
           <GoogleSignInButton onLogin={onLogin} />
+          <FacebookSignInButton onLogin={onLogin} />
         </div>
       )}
       <button onClick={() => getComments()}>Click me</button>
       {/* All comments */}
       <div className="comments">
         {allComments.length > 0 ? (
-          allComments.reverse().map((comment) => {
-            return <SingleComment comment={comment} />;
-          })
+          allComments
+            .sort(sortComments)
+            .reverse()
+            .map((comment) => {
+              return <SingleComment comment={comment} />;
+            })
         ) : (
           <h1>Bądź pierwszą osobą, która doda komentarz...</h1>
         )}
