@@ -4,14 +4,25 @@ import firebase from "../firebase";
 import {
   GoogleSignInButton,
   FacebookSignInButton,
+  GithubSignInButton,
 } from "./Authentication/AuthComponents";
 import { SingleComment, CommentInput } from "./Comments/CommentComponents";
+
+const DEFAULT_NUM_OF_COMMENTS = 3;
 
 export const CommentRoll = ({ id }) => {
   const [name, setName] = React.useState("");
   const [allComments, setAllComments] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userImgUrl, setUserImgUrl] = React.useState("");
+  const [numOfComments, setNumOfComments] = React.useState(
+    DEFAULT_NUM_OF_COMMENTS
+  );
+
+  React.useEffect(() => {
+    getComments();
+    console.log("MOUNTED!");
+  }, [allComments.length]); //Sometimes gives error - need to check it
 
   const addComment = (comment, commentDate) => {
     console.log("I'm here!");
@@ -37,7 +48,7 @@ export const CommentRoll = ({ id }) => {
           }
         );
     }
-    getComments();
+    // getComments(); //useEffect does it every time a new comment is added
   };
 
   const getComments = () => {
@@ -48,9 +59,10 @@ export const CommentRoll = ({ id }) => {
       (snaphot) => {
         const coms = snaphot.val();
         if (coms !== null) {
-          console.log(Object.entries(coms));
+          // console.log(Object.entries(coms));
           Object.entries(coms).forEach((elem) => {
-            console.log(elem[1]);
+            elem[1].id = elem[0];
+            // console.log(elem[1]);
             setAllComments((allComments) => [...allComments, elem[1]]);
           });
         } else {
@@ -80,6 +92,17 @@ export const CommentRoll = ({ id }) => {
     }
   };
 
+  const handleMoreComments = () => {
+    if (allComments.length > numOfComments) {
+      setNumOfComments(numOfComments + 10);
+    }
+    console.log(numOfComments);
+  };
+
+  const handleHideComments = () => {
+    setNumOfComments(DEFAULT_NUM_OF_COMMENTS);
+  };
+
   return (
     <div>
       {loggedIn ? (
@@ -89,22 +112,36 @@ export const CommentRoll = ({ id }) => {
           addComment={addComment}
         />
       ) : (
-        <div>
-          <h1>In order to add comment you need to sign in!</h1>
-          <GoogleSignInButton onLogin={onLogin} />
-          <FacebookSignInButton onLogin={onLogin} />
+        <div className="login-container">
+          <div className="before-login-info">
+            In order to add comment you need to sign in!
+          </div>
+          <div className="sign-in-buttons">
+            <GoogleSignInButton onLogin={onLogin} />
+            <FacebookSignInButton onLogin={onLogin} />
+            <GithubSignInButton onLogin={onLogin} />
+          </div>
         </div>
       )}
-      <button onClick={() => getComments()}>Click me</button>
+      {/* <button onClick={() => getComments()}>Click me</button> */}
       {/* All comments */}
       <div className="comments">
         {allComments.length > 0 ? (
-          allComments
-            .sort(sortComments)
-            .reverse()
-            .map((comment) => {
-              return <SingleComment comment={comment} />;
-            })
+          <div>
+            {allComments
+              .sort(sortComments)
+              .reverse()
+              .slice(0, numOfComments)
+              .map((comment) => {
+                return <SingleComment comment={comment} key={comment.id} />;
+              })}
+            <div className="more-comments-container">
+              <button onClick={handleMoreComments}>More comments</button>
+              {numOfComments > DEFAULT_NUM_OF_COMMENTS && (
+                <button onClick={handleHideComments}>Hide comments</button>
+              )}
+            </div>
+          </div>
         ) : (
           <h1>Bądź pierwszą osobą, która doda komentarz...</h1>
         )}
