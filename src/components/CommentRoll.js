@@ -125,9 +125,10 @@ export const CommentRoll = ({ id }) => {
       )}
       {/* <button onClick={() => getComments()}>Click me</button> */}
       {/* All comments */}
-      <div className="comments">
+      {/* <div className="comments"> */}
+      <div>
         {allComments.length > 0 ? (
-          <div>
+          <div className="comments">
             {allComments
               .sort(sortComments)
               .reverse()
@@ -136,9 +137,19 @@ export const CommentRoll = ({ id }) => {
                 return <SingleComment comment={comment} key={comment.id} />;
               })}
             <div className="more-comments-container">
-              <button onClick={handleMoreComments}>More comments</button>
+              <button
+                className="more-comments-btn"
+                onClick={handleMoreComments}
+              >
+                More comments
+              </button>
               {numOfComments > DEFAULT_NUM_OF_COMMENTS && (
-                <button onClick={handleHideComments}>Hide comments</button>
+                <button
+                  className="more-comments-btn"
+                  onClick={handleHideComments}
+                >
+                  Hide comments
+                </button>
               )}
             </div>
           </div>

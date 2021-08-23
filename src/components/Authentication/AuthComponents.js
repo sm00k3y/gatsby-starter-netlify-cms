@@ -1,5 +1,5 @@
 import * as React from "react";
-import firebase from "firebase";
+import firebase from "../../firebase";
 import gLogo from "../../img/g_logo.svg";
 import fbLogo from "../../img/facebook-round-color.svg";
 import githubLogo from "../../img/github-logo.svg";
