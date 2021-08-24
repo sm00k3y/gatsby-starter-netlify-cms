@@ -15,27 +15,37 @@ export const CommentRoll = ({ id }) => {
   const [allComments, setAllComments] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userImgUrl, setUserImgUrl] = React.useState("");
-  const [commentsCount, setCommentsCount] = React.useState(0);
   const [numOfComments, setNumOfComments] = React.useState(
     DEFAULT_NUM_OF_COMMENTS
   );
 
   React.useEffect(() => {
-    getComments();
-    console.log("MOUNTED!");
-  }, [allComments.length]); //Sometimes gives error - need to check it
-
-  // React.useEffect(() => {
-  //   getComments();
-  //   console.log("Getting comments");
-  // }, [commentsCount]);
-
-  // React.useEffect(() => {
-  //   getComments();
-  //   return () => {
-  //     setAllComments([]);
-  //   };
-  // }, [allComments.length]);
+    console.log("Setting up firebase listener");
+    const ref = firebase.database().ref("comments/" + id);
+    ref.on(
+      "value",
+      (snaphot) => {
+        setAllComments([]);
+        const coms = snaphot.val();
+        if (coms !== null) {
+          // console.log(Object.entries(coms));
+          Object.entries(coms).forEach((elem) => {
+            elem[1].id = elem[0];
+            // console.log(elem[1]);
+            setAllComments((allComments) => [...allComments, elem[1]]);
+          });
+        } else {
+          console.log("No comments in DB");
+        }
+      },
+      (errorObj) => {
+        console.log("The read failed: " + errorObj.name);
+      }
+    );
+    return () => {
+      ref.off("value"); //Cancelling listener to firebase
+    };
+  }, [id]);
 
   const addComment = (comment, commentDate) => {
     console.log("I'm here!");
@@ -61,32 +71,6 @@ export const CommentRoll = ({ id }) => {
           }
         );
     }
-    // getComments(); //useEffect does it every time a new comment is added
-  };
-
-  const getComments = () => {
-    setAllComments([]);
-    const ref = firebase.database().ref("comments/" + id);
-    ref.on(
-      "value",
-      (snaphot) => {
-        const coms = snaphot.val();
-        if (coms !== null) {
-          // console.log(Object.entries(coms));
-          Object.entries(coms).forEach((elem) => {
-            elem[1].id = elem[0];
-            // console.log(elem[1]);
-            setAllComments((allComments) => [...allComments, elem[1]]);
-          });
-          setCommentsCount(allComments.length);
-        } else {
-          console.log("No comments in DB");
-        }
-      },
-      (errorObj) => {
-        console.log("The read failed: " + errorObj.name);
-      }
-    );
   };
 
   const onLogin = (loginName, imageUrl) => {
@@ -137,9 +121,7 @@ export const CommentRoll = ({ id }) => {
           </div>
         </div>
       )}
-      {/* <button onClick={() => getComments()}>Click me</button> */}
       {/* All comments */}
-      {/* <div className="comments"> */}
       <div>
         {allComments.length > 0 ? (
           <div className="comments">
