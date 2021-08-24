@@ -15,6 +15,7 @@ export const CommentRoll = ({ id }) => {
   const [allComments, setAllComments] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userImgUrl, setUserImgUrl] = React.useState("");
+  const [commentsCount, setCommentsCount] = React.useState(0);
   const [numOfComments, setNumOfComments] = React.useState(
     DEFAULT_NUM_OF_COMMENTS
   );
@@ -23,6 +24,18 @@ export const CommentRoll = ({ id }) => {
     getComments();
     console.log("MOUNTED!");
   }, [allComments.length]); //Sometimes gives error - need to check it
+
+  // React.useEffect(() => {
+  //   getComments();
+  //   console.log("Getting comments");
+  // }, [commentsCount]);
+
+  // React.useEffect(() => {
+  //   getComments();
+  //   return () => {
+  //     setAllComments([]);
+  //   };
+  // }, [allComments.length]);
 
   const addComment = (comment, commentDate) => {
     console.log("I'm here!");
@@ -65,6 +78,7 @@ export const CommentRoll = ({ id }) => {
             // console.log(elem[1]);
             setAllComments((allComments) => [...allComments, elem[1]]);
           });
+          setCommentsCount(allComments.length);
         } else {
           console.log("No comments in DB");
         }
