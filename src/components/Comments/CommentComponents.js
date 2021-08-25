@@ -4,9 +4,9 @@ export const SingleComment = ({ comment }) => {
   const dateString = (commentDate) => {
     var date = new Date(commentDate);
     return (
-      date.getHours() +
+      date.toLocaleString("pl-PL", { hour: "2-digit" }) +
       ":" +
-      date.getMinutes() +
+      date.toLocaleString("pl-PL", { minute: "2-digit" }) +
       "  " +
       date.toLocaleDateString("pl-PL", { day: "2-digit" }) +
       "." +

@@ -9,6 +9,7 @@ import {
 import { SingleComment, CommentInput } from "./Comments/CommentComponents";
 
 const DEFAULT_NUM_OF_COMMENTS = 3;
+const DEFAULT_COMMENT_TIMEOUT = 30_000; //30 seconds
 
 export const CommentRoll = ({ id }) => {
   const [name, setName] = React.useState("");
@@ -18,6 +19,8 @@ export const CommentRoll = ({ id }) => {
   const [numOfComments, setNumOfComments] = React.useState(
     DEFAULT_NUM_OF_COMMENTS
   );
+  const [canWriteAnotherComment, setCanWriteAnotherComment] =
+    React.useState(true);
 
   React.useEffect(() => {
     console.log("Setting up firebase listener");
@@ -48,7 +51,14 @@ export const CommentRoll = ({ id }) => {
   }, [id]);
 
   const addComment = (comment, commentDate) => {
-    console.log("I'm here!");
+    if (!canWriteAnotherComment) {
+      alert(
+        "Przed dodaniem kolejnego komentarza należy odczekać " +
+          DEFAULT_COMMENT_TIMEOUT / 1000 +
+          " sekund :)"
+      );
+      return;
+    }
     if (name === "" || comment === "") {
       alert("Nie można dodać pustego komentarza. :)");
     } else {
@@ -66,11 +76,20 @@ export const CommentRoll = ({ id }) => {
             if (error) {
               console.log(error.message);
             } else {
-              console.log("No error adding comment to DB!");
+              console.log("No error adding comment to DB! :)");
             }
           }
         );
+      setCanWriteAnotherComment(false);
+      startCommentTimeout();
     }
+  };
+
+  const startCommentTimeout = () => {
+    console.log("Setting timeout");
+    setTimeout(() => {
+      setCanWriteAnotherComment(true);
+    }, DEFAULT_COMMENT_TIMEOUT);
   };
 
   const onLogin = (loginName, imageUrl) => {
@@ -95,6 +114,9 @@ export const CommentRoll = ({ id }) => {
       setNumOfComments(numOfComments + 10);
     }
     console.log(numOfComments);
+    setTimeout(() => {
+      console.log("Czekasz 3 sekundy");
+    }, 3000);
   };
 
   const handleHideComments = () => {
